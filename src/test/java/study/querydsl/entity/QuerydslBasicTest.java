@@ -133,4 +133,16 @@ public class QuerydslBasicTest {
         //when
     //then
     }
+
+    @Test
+    public void join() throws Exception{
+    //given
+        List<Member> teamA = queryFactory
+                .selectFrom(member)
+                .join(member.team, team)
+                .where(team.name.eq("teamA"))
+                .fetch();
+        //when
+    //then
+    }
 }
