@@ -1,5 +1,6 @@
 package study.querydsl.entity;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,6 +15,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static study.querydsl.entity.QMember.member;
+import static study.querydsl.entity.QTeam.*;
 
 @SpringBootTest
 @Transactional
@@ -104,4 +106,31 @@ public class QuerydslBasicTest {
 
     }
 
+    @Test
+    public void aggregation() {
+        List<Tuple> fetch = queryFactory
+                .select(member.count(),
+                        member.age.sum(),
+                        member.age.avg(),
+                        member.age.max(),
+                        member.age.min())
+                .from(member)
+                .fetch();
+
+        Tuple tuple = fetch.get(0);
+        assertThat(tuple.get(member.count())).isEqualTo(4);
+    }
+
+    @Test
+    public void group() throws Exception{
+    //given
+        List<Tuple> fetch = queryFactory
+                .select(team.name, member.age.avg())
+                .from(member)
+                .join(member.team, team)
+                .groupBy(team.name)
+                .fetch();
+        //when
+    //then
+    }
 }
